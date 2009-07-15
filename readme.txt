@@ -1,0 +1,26 @@
+=== NiTkPress ===
+Contributors: sakuratan
+Donate link: http://sakuratan.biz/
+Tags: twitter, widget, flash
+Requires at least: 2.7.0
+Tested up to: 2.7.1
+Stable tag: 0.9.1
+
+A Twitter client widget.
+
+== Description ==
+
+NiTwPress is a Twitter client WordPress widget. It displays your twit to the WordPress sidebar with left to right scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
+
+== Installation ==
+
+1. Get Twitter account
+2. Upload this directory to your plugins directory. It will create a 'wp-content/plugins/nitwpress/' directory
+3. Activate the plugin through the 'Plugins' menu in WordPress
+4. Add NiTwPress widget through the `Widget' menu in WordPress
+5. Enter your Twitter account information to the widget control
+
+== Changelog ==
+
+= 0.9.1 =
+* First version of NiTwPress plugin.
