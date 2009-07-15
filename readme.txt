@@ -1,4 +1,4 @@
-=== NiTkPress ===
+=== NiTwPress ===
 Contributors: sakuratan
 Donate link: http://sakuratan.biz/
 Tags: twitter, widget, flash
