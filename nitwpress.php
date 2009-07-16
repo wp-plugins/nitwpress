@@ -195,9 +195,9 @@ function nitwpress_widget_control() {
     </tr>
   </table>
 
-  <p>(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields
-  (HTML color name (e.g. white) is not acceptable).
-  The widget will read default font color from Twitter API if you choose &quot;auto&quot;.)</p>
+  <p>(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields.
+  HTML color name (e.g. white) is not acceptable.
+  The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)</p>
 
   <h3>Frame for icon image</h3>
 
