@@ -5,7 +5,7 @@ Plugin URI: http://sakuratan.biz/contents/NiTwPress
 Description: NiTwPress is a Twitter client for WordPress sidebar widget. It displays your twit on the WordPress sidebar with comment scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
 Author: sakuratan
 Author URI: http://sakuratan.biz/
-Version: 0.9.1.1
+Version: 0.9.1.2
 */
 
 /*
@@ -35,15 +35,50 @@ define('NITWPRESS_CACHES', NITWPRESS_PLUGINS . 'caches/');
 define('NITWPRESS_CACHEDIR', ABSPATH . NITWPRESS_CACHES);
 
 /*
+ * Returns options.
+ */
+function nitwpress_get_options() {
+    $defaults = array(
+	'username' => '',
+	'password' => '',
+	'interval' => 15,
+	'logo' => true
+    );
+
+    return array_merge($defaults, get_option('nitwpress_options', array()));
+}
+
+/*
+ * Update options.
+ */
+function nitwpress_update_options(&$newvars) {
+    $options = nitwpress_get_options();
+
+    foreach ($options as $key => $dummy) {
+	if (array_key_exists($key, $newvars)) {
+	    if ($key == 'logo')
+		continue;
+	    if ($key == 'interval') {
+		$options[$key] = (int)$newvars[$key];
+	    } else {
+		$options[$key] = $newvars[$key];
+	    }
+	}
+    }
+
+    $options['logo'] = array_key_exists('logo', $newvars);
+
+    update_option('nitwpress_options', $options);
+}
+
+/*
  * Update cache files.
  */
 function nitwpress_update_caches() {
     require_once dirname(__file__) . '/twitter.php';
 
-    $options = get_option('nitwpress_options');
-    if (!$options)
-	return;
-    if (!array_key_exists('username', $options) || !$options['username'])
+    $options = nitwpress_get_options();
+    if (!$options['username'])
 	return;
 
     nitwpress_twitter_update_caches(NITWPRESS_CACHEDIR, $options['username'],
@@ -58,13 +93,19 @@ function nitwpress_sidebar_widget($args) {
 
     echo $before_widget;
 
-    $options = get_option('nitwpress_options');
-    if ($options) :
+    $options = nitwpress_get_options();
+    if ($options['username']) :
 	$username = htmlspecialchars($options['username']);
 	$siteurl = get_option('siteurl');
 	$plugin = $siteurl . NITWPRESS_PLUGINS;
 	$swf = htmlspecialchars("{$plugin}nitwpress.swf");
 	$base = htmlspecialchars("{$siteurl}" . NITWPRESS_CACHES);
+
+	if (!$options['logo']) {
+	    $flashvars = 'disablelogo=1';
+	} else {
+	    $flashvars = '';
+	}
 
 ?>
 <div style="text-align:center">
@@ -73,9 +114,10 @@ function nitwpress_sidebar_widget($args) {
     <param name="quality" value="high" />
     <param name="bgcolor" value="#ffffff" />
     <param name="base" value="<?php echo $base ?>" />
+    <param name="flashvars" value="<?php echo $flashvars ?>" />
     <script type="text/javascript">
 //<!--
-      document.write('<embed pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="154" height="154" src="<?php echo $swf ?>" quality="high" base="<?php echo $base ?>" ></embed>');
+      document.write('<embed pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="154" height="154" src="<?php echo $swf ?>" quality="high" base="<?php echo $base ?>" flashvars="<?php echo $flashvars ?>"></embed>');
       document.write('<noembed><div><a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /></a></div></noembed>');
 //-->
     </script>
@@ -96,31 +138,15 @@ function nitwpress_sidebar_widget($args) {
  * Widget manager.
  */
 function nitwpress_widget_control() {
-    $defaults = array(
-	'username' => '',
-	'password' => '',
-	'interval' => 15
-    );
-
     if (array_key_exists('nitwpress_action', $_POST)) {
-	$options = array();
-	foreach ($defaults as $key => $value) {
-	    if (array_key_exists($key, $_POST)) {
-		$options[$key] = $_POST[$key];
-	    } else {
-		$options[$key] = $value;
-	    }
-	}
-	update_option('nitwpress_options', $options);
+	nitwpress_update_options($_POST);
 	nitwpress_update_caches();
-
     }
-
-    $options = get_option('nitwpress_options', $defaults);
+    $options = nitwpress_get_options();
 
 ?>
 <form method="post">
-  <p>Enter your Twitter account.<input type="hidden" name="nitwpress_action" /></p>
+  <p>Enter your Twitter account and options.<input type="hidden" name="nitwpress_action" /></p>
   <table>
     <tr>
       <td>Username</td>
@@ -131,12 +157,12 @@ function nitwpress_widget_control() {
       <td>Password</td>
       <td><input type="password" name="password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
     </tr>
-
-    <tr>
-      <td>Timeline</td>
-      <td>Update timeline cache at every <input type="text" name="interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</td>
-    </tr>
   </table>
+
+  <p>Update timeline cache at every <input type="text" name="interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
+
+  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
+  <label for="nitwpress_logo_checkbox">Display NiTwPress logo on Flash.</label></p>
 </form>
 <?php
 
