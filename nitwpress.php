@@ -42,7 +42,9 @@ function nitwpress_get_options() {
 	'username' => '',
 	'password' => '',
 	'interval' => 15,
-	'logo' => true
+	'logo' => true,
+	'iconframe' => false,
+	'iconframecolor' => '#c0c0c0'
     );
 
     return array_merge($defaults, get_option('nitwpress_options', array()));
@@ -54,19 +56,20 @@ function nitwpress_get_options() {
 function nitwpress_update_options(&$newvars) {
     $options = nitwpress_get_options();
 
-    foreach ($options as $key => $dummy) {
+    $options['logo'] = false;
+    $options['iconframe'] = false;
+
+    foreach ($options as $key => $value) {
 	if (array_key_exists($key, $newvars)) {
-	    if ($key == 'logo')
-		continue;
-	    if ($key == 'interval') {
+	    if (($key == 'logo' || $key == 'iconframe') && $value) {
+		$options[$key] = true;
+	    } elseif ($key == 'interval') {
 		$options[$key] = (int)$newvars[$key];
 	    } else {
 		$options[$key] = $newvars[$key];
 	    }
 	}
     }
-
-    $options['logo'] = array_key_exists('logo', $newvars);
 
     update_option('nitwpress_options', $options);
 }
@@ -102,10 +105,13 @@ function nitwpress_sidebar_widget($args) {
 	$base = htmlspecialchars("{$siteurl}" . NITWPRESS_CACHES);
 
 	if (!$options['logo']) {
-	    $flashvars = 'disablelogo=1';
-	} else {
-	    $flashvars = '';
+	    $_flashvars[] = 'disablelogo=1';
 	}
+	if ($options['iconframe']) {
+	    $_flashvars[] = 'iconframe=1';
+	    $_flashvars[] = 'iconframecolor=' . preg_replace('/^#*/', '', $options['iconframecolor']);
+	}
+	$flashvars = implode('&', $_flashvars);
 
 ?>
 <div style="text-align:center">
@@ -163,6 +169,12 @@ function nitwpress_widget_control() {
 
   <p><input type="checkbox" id="nitwpress_logo_checkbox" name="logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_logo_checkbox">Display NiTwPress logo on Flash.</label></p>
+
+  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
+  <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label><br />
+  Color of icon frame: <input type="text" name="iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
+  NOTE Use hexdecimal color code for the color of icon frame. You cannot use HTML color name to this field.</p>
+
 </form>
 <?php
 
