@@ -22,6 +22,10 @@ NiTwPress is a Twitter client WordPress widget. It displays your twit to the Wor
 
 == Changelog ==
 
+= 0.9.1.2 =
+* Comment scrolling algorithm modified.
+* Users can hide the NiTwPress logo.
+
 = 0.9.1.1 =
 * Typo in plugin name of readme.txt.
 
