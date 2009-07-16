@@ -5,7 +5,7 @@ Plugin URI: http://sakuratan.biz/contents/NiTwPress
 Description: NiTwPress is a Twitter client for WordPress sidebar widget. It displays your twit on the WordPress sidebar with comment scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
 Author: sakuratan
 Author URI: http://sakuratan.biz/
-Version: 0.9.1.2
+Version: 0.9.1.3
 */
 
 /*
@@ -41,6 +41,8 @@ function nitwpress_get_options() {
     $defaults = array(
 	'username' => '',
 	'password' => '',
+	'fontcolor' => 'auto',
+	'linkcolor' => 'auto',
 	'interval' => 15,
 	'logo' => true,
 	'iconframe' => false,
@@ -104,13 +106,28 @@ function nitwpress_sidebar_widget($args) {
 	$swf = htmlspecialchars("{$plugin}nitwpress.swf");
 	$base = htmlspecialchars("{$siteurl}" . NITWPRESS_CACHES);
 
+	if ($options['fontcolor'] &&
+	    strcasecmp($options['fontcolor'], 'auto') != 0) {
+	    $_flashvars[] = 'fontcolor=' .
+		preg_replace('/^#*/', '', $options['fontcolor']);
+	}
+
+	if ($options['linkcolor'] &&
+	    strcasecmp($options['linkcolor'], 'auto') != 0) {
+	    $_flashvars[] = 'linkcolor=' .
+		preg_replace('/^#*/', '', $options['linkcolor']);
+	}
+
 	if (!$options['logo']) {
 	    $_flashvars[] = 'disablelogo=1';
 	}
+
 	if ($options['iconframe']) {
 	    $_flashvars[] = 'iconframe=1';
-	    $_flashvars[] = 'iconframecolor=' . preg_replace('/^#*/', '', $options['iconframecolor']);
+	    $_flashvars[] = 'iconframecolor=' .
+		preg_replace('/^#*/', '', $options['iconframecolor']);
 	}
+
 	$flashvars = implode('&', $_flashvars);
 
 ?>
@@ -152,7 +169,7 @@ function nitwpress_widget_control() {
 
 ?>
 <form method="post">
-  <p>Enter your Twitter account and options.<input type="hidden" name="nitwpress_action" /></p>
+  <h3>Twitter account</h3>
   <table>
     <tr>
       <td>Username</td>
@@ -165,16 +182,39 @@ function nitwpress_widget_control() {
     </tr>
   </table>
 
+  <h3>Font colors</h3>
+
+  <table>
+    <tr>
+      <td>Comments</td>
+      <td><input type="text" name="fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
+    </tr>
+    <tr>
+      <td>Links</td>
+      <td><input type="text" name="linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
+    </tr>
+  </table>
+
+  <p>(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields.
+  HTML color name (e.g. white) is not acceptable.
+  The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)</p>
+
+  <h3>Frame for icon image</h3>
+
+  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
+  <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label></p>
+  <p>Color of icon frame: <input type="text" name="iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
+  (Use hash color code (e.g. #ffffff) for the color of icon frame.
+  HTML color name (e.g. white) is not acceptable.)</p>
+
+  <h3>Miscellaneous options</h3>
+
   <p>Update timeline cache at every <input type="text" name="interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
 
   <p><input type="checkbox" id="nitwpress_logo_checkbox" name="logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_logo_checkbox">Display NiTwPress logo on Flash.</label></p>
 
-  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
-  <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label><br />
-  Color of icon frame: <input type="text" name="iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
-  NOTE Use hexdecimal color code for the color of icon frame. You cannot use HTML color name to this field.</p>
-
+  <div><input type="hidden" name="nitwpress_action" /></div>
 </form>
 <?php
 
