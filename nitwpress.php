@@ -205,12 +205,12 @@ function nitwpress_widget_control() {
   <h3>Twitter account</h3>
   <table>
     <tr>
-      <td>Username</td>
+      <td>Username:</td>
       <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
     </tr>
 
     <tr>
-      <td>Password</td>
+      <td>Password:</td>
       <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
     </tr>
   </table>
@@ -224,17 +224,17 @@ function nitwpress_widget_control() {
   <h3>CSS for widget content</h3>
 
   <div><input type="text" name="nitwpress_widgetstyles" value="<?php echo htmlspecialchars($options['widgetstyles']) ?>" style="width:100%" /></div>
-  <p>(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for design the widget with out style attribute of &lt;div&gt; tag for the widget content area. In this case, clear this field for suppress the style attribute.)</p>
+  <p>(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for designing the widget with out this field.)</p>
 
   <h3>Font colors</h3>
 
   <table>
     <tr>
-      <td>Comments</td>
+      <td>Color of comments:</td>
       <td><input type="text" name="nitwpress_fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
     </tr>
     <tr>
-      <td>Links</td>
+      <td>Color of links:</td>
       <td><input type="text" name="nitwpress_linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
     </tr>
   </table>
@@ -248,7 +248,7 @@ function nitwpress_widget_control() {
   <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label></p>
   <p>Color of icon frame: <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
-  (Use hash color code (e.g. #ffffff) for the color of icon frame.
+  (Use hash color code (e.g. #ffffff) for this field.
   HTML color name (e.g. white) is not acceptable.)</p>
 
   <h3>Miscellaneous options</h3>
