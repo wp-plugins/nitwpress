@@ -41,6 +41,7 @@ function nitwpress_get_options() {
     $defaults = array(
 	'username' => '',
 	'password' => '',
+	'widgettitle' => '',
 	'fontcolor' => 'auto',
 	'linkcolor' => 'auto',
 	'interval' => 15,
@@ -148,6 +149,11 @@ function nitwpress_sidebar_widget($args) {
 
 	$flashvars = nitwpress_rawurlencode_array($_flashvars);
 
+	if ($options['widgettitle']) :
+?>
+<h2 class="widgettitle"><?php echo htmlspecialchars($options['widgettitle']) ?></h2>
+<?php
+	endif;
 ?>
 <div style="text-align:center">
   <object codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="154" height="154" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
@@ -199,6 +205,12 @@ function nitwpress_widget_control() {
       <td><input type="password" name="password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
     </tr>
   </table>
+
+  <h3>Widget title</h3>
+
+  <div><input type="text" name="widgettitle" value="<?php echo htmlspecialchars($options['widgettitle']) ?>" style="width:100%" /></div>
+
+  <p>(The widget suppress the widget title when this field is empty.)</p>
 
   <h3>Font colors</h3>
 
