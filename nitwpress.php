@@ -91,6 +91,22 @@ function nitwpress_update_caches() {
 }
 
 /*
+ * Implode with rawurlencode.
+ */
+function nitwpress_rawurlencode_array(&$arr) {
+    if (!$arr)
+	return '';
+
+    $s = '';
+    foreach ($arr as $key => $value) {
+	if ($s)
+	    $s .= '&';
+	$s .= rawurlencode($key) . '=' . rawurlencode($value);
+    }
+    return $s;
+}
+
+/*
  * The widget.
  */
 function nitwpress_sidebar_widget($args) {
@@ -106,29 +122,31 @@ function nitwpress_sidebar_widget($args) {
 	$swf = htmlspecialchars("{$plugin}nitwpress.swf");
 	$base = htmlspecialchars("{$siteurl}" . NITWPRESS_CACHES);
 
+	$_flashvars = array();
+
 	if ($options['fontcolor'] &&
 	    strcasecmp($options['fontcolor'], 'auto') != 0) {
-	    $_flashvars[] = 'fontcolor=' .
-		preg_replace('/^#*/', '', $options['fontcolor']);
+	    $_flashvars['fontcolor'] = preg_replace('/^#*/', '',
+						    $options['fontcolor']);
 	}
 
 	if ($options['linkcolor'] &&
 	    strcasecmp($options['linkcolor'], 'auto') != 0) {
-	    $_flashvars[] = 'linkcolor=' .
-		preg_replace('/^#*/', '', $options['linkcolor']);
+	    $_flashvars['linkcolor'] = preg_replace('/^#*/', '',
+						    $options['linkcolor']);
 	}
 
 	if (!$options['logo']) {
-	    $_flashvars[] = 'disablelogo=1';
+	    $_flashvars['disablelogo'] = '1';
 	}
 
 	if ($options['iconframe']) {
-	    $_flashvars[] = 'iconframe=1';
-	    $_flashvars[] = 'iconframecolor=' .
-		preg_replace('/^#*/', '', $options['iconframecolor']);
+	    $_flashvars['iconframe'] = '1';
+	    $_flashvars['iconframecolor'] = preg_replace('/^#*/', '',
+						$options['iconframecolor']);
 	}
 
-	$flashvars = implode('&', $_flashvars);
+	$flashvars = nitwpress_rawurlencode_array($_flashvars);
 
 ?>
 <div style="text-align:center">
