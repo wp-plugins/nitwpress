@@ -5,7 +5,7 @@ Plugin URI: http://sakuratan.biz/contents/NiTwPress
 Description: NiTwPress is a Twitter client for WordPress sidebar widget. It displays your twit on the WordPress sidebar with comment scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
 Author: sakuratan
 Author URI: http://sakuratan.biz/
-Version: 0.9.1.3
+Version: 0.9.1.4
 */
 
 /*
@@ -41,6 +41,8 @@ function nitwpress_get_options() {
     $defaults = array(
 	'username' => '',
 	'password' => '',
+	'widgettitle' => '',
+	'widgetstyles' => 'text-align:center',
 	'fontcolor' => 'auto',
 	'linkcolor' => 'auto',
 	'interval' => 15,
@@ -55,20 +57,22 @@ function nitwpress_get_options() {
 /*
  * Update options.
  */
-function nitwpress_update_options(&$newvars) {
+function nitwpress_update_options(&$newvars, $prefix='') {
     $options = nitwpress_get_options();
 
     $options['logo'] = false;
     $options['iconframe'] = false;
 
     foreach ($options as $key => $value) {
-	if (array_key_exists($key, $newvars)) {
-	    if (($key == 'logo' || $key == 'iconframe') && $value) {
+	$nkey = "{$prefix}{$key}";
+	if (array_key_exists($nkey, $newvars)) {
+	    $newvalue = $newvars[$nkey];
+	    if (($key == 'logo' || $key == 'iconframe') && $newvalue) {
 		$options[$key] = true;
 	    } elseif ($key == 'interval') {
-		$options[$key] = (int)$newvars[$key];
+		$options[$key] = (int)$newvalue;
 	    } else {
-		$options[$key] = $newvars[$key];
+		$options[$key] = $newvalue;
 	    }
 	}
     }
@@ -148,8 +152,19 @@ function nitwpress_sidebar_widget($args) {
 
 	$flashvars = nitwpress_rawurlencode_array($_flashvars);
 
+	if ($options['widgetstyles']) {
+	    $style = ' style="'.htmlspecialchars($options['widgetstyles']).'"';
+	} else {
+	    $style = '';
+	}
+
+	if ($options['widgettitle']) :
 ?>
-<div style="text-align:center">
+<h2 class="widgettitle"><?php echo htmlspecialchars($options['widgettitle']) ?></h2>
+<?php
+	endif;
+?>
+<div class="nitwpress_widget_content"<?php echo $style ?>>
   <object codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="154" height="154" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
     <param name="movie" value="<?php echo $swf ?>" />
     <param name="quality" value="high" />
@@ -179,8 +194,8 @@ function nitwpress_sidebar_widget($args) {
  * Widget manager.
  */
 function nitwpress_widget_control() {
-    if (array_key_exists('nitwpress_action', $_POST)) {
-	nitwpress_update_options($_POST);
+    if (array_key_exists('nitwpress_username', $_POST)) {
+	nitwpress_update_options($_POST, 'nitwpress_');
 	nitwpress_update_caches();
     }
     $options = nitwpress_get_options();
@@ -190,26 +205,37 @@ function nitwpress_widget_control() {
   <h3>Twitter account</h3>
   <table>
     <tr>
-      <td>Username</td>
-      <td><input type="text" name="username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
+      <td>Username:</td>
+      <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
     </tr>
 
     <tr>
-      <td>Password</td>
-      <td><input type="password" name="password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
+      <td>Password:</td>
+      <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
     </tr>
   </table>
+
+  <h3>Widget title</h3>
+
+  <div><input type="text" name="nitwpress_widgettitle" value="<?php echo htmlspecialchars($options['widgettitle']) ?>" style="width:100%" /></div>
+
+  <p>(The widget suppress the widget title when this field is empty.)</p>
+
+  <h3>CSS for widget content</h3>
+
+  <div><input type="text" name="nitwpress_widgetstyles" value="<?php echo htmlspecialchars($options['widgetstyles']) ?>" style="width:100%" /></div>
+  <p>(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for designing the widget with out this field.)</p>
 
   <h3>Font colors</h3>
 
   <table>
     <tr>
-      <td>Comments</td>
-      <td><input type="text" name="fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
+      <td>Color of comments:</td>
+      <td><input type="text" name="nitwpress_fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
     </tr>
     <tr>
-      <td>Links</td>
-      <td><input type="text" name="linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
+      <td>Color of links:</td>
+      <td><input type="text" name="nitwpress_linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
     </tr>
   </table>
 
@@ -219,20 +245,18 @@ function nitwpress_widget_control() {
 
   <h3>Frame for icon image</h3>
 
-  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
+  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label></p>
-  <p>Color of icon frame: <input type="text" name="iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
-  (Use hash color code (e.g. #ffffff) for the color of icon frame.
+  <p>Color of icon frame: <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
+  (Use hash color code (e.g. #ffffff) for this field.
   HTML color name (e.g. white) is not acceptable.)</p>
 
   <h3>Miscellaneous options</h3>
 
-  <p>Update timeline cache at every <input type="text" name="interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
+  <p>Update timeline cache at every <input type="text" name="nitwpress_interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
 
-  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
+  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="nitwpress_logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_logo_checkbox">Display NiTwPress logo on Flash.</label></p>
-
-  <div><input type="hidden" name="nitwpress_action" /></div>
 </form>
 <?php
 
