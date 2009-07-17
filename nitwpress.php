@@ -57,20 +57,22 @@ function nitwpress_get_options() {
 /*
  * Update options.
  */
-function nitwpress_update_options(&$newvars) {
+function nitwpress_update_options(&$newvars, $prefix='') {
     $options = nitwpress_get_options();
 
     $options['logo'] = false;
     $options['iconframe'] = false;
 
     foreach ($options as $key => $value) {
-	if (array_key_exists($key, $newvars)) {
-	    if (($key == 'logo' || $key == 'iconframe') && $value) {
+	$nkey = "{$prefix}{$key}";
+	if (array_key_exists($nkey, $newvars)) {
+	    $newvalue = $newvars[$nkey];
+	    if (($key == 'logo' || $key == 'iconframe') && $newvalue) {
 		$options[$key] = true;
 	    } elseif ($key == 'interval') {
-		$options[$key] = (int)$newvars[$key];
+		$options[$key] = (int)$newvalue;
 	    } else {
-		$options[$key] = $newvars[$key];
+		$options[$key] = $newvalue;
 	    }
 	}
     }
@@ -192,8 +194,8 @@ function nitwpress_sidebar_widget($args) {
  * Widget manager.
  */
 function nitwpress_widget_control() {
-    if (array_key_exists('nitwpress_action', $_POST)) {
-	nitwpress_update_options($_POST);
+    if (array_key_exists('nitwpress_username', $_POST)) {
+	nitwpress_update_options($_POST, 'nitwpress_');
 	nitwpress_update_caches();
     }
     $options = nitwpress_get_options();
@@ -204,24 +206,24 @@ function nitwpress_widget_control() {
   <table>
     <tr>
       <td>Username</td>
-      <td><input type="text" name="username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
+      <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
     </tr>
 
     <tr>
       <td>Password</td>
-      <td><input type="password" name="password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
+      <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
     </tr>
   </table>
 
   <h3>Widget title</h3>
 
-  <div><input type="text" name="widgettitle" value="<?php echo htmlspecialchars($options['widgettitle']) ?>" style="width:100%" /></div>
+  <div><input type="text" name="nitwpress_widgettitle" value="<?php echo htmlspecialchars($options['widgettitle']) ?>" style="width:100%" /></div>
 
   <p>(The widget suppress the widget title when this field is empty.)</p>
 
   <h3>CSS for widget content</h3>
 
-  <div><input type="text" name="widgetstyles" value="<?php echo htmlspecialchars($options['widgetstyles']) ?>" style="width:100%" /></div>
+  <div><input type="text" name="nitwpress_widgetstyles" value="<?php echo htmlspecialchars($options['widgetstyles']) ?>" style="width:100%" /></div>
   <p>(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for design the widget with out style attribute of &lt;div&gt; tag for the widget content area. In this case, clear this field for suppress the style attribute.)</p>
 
   <h3>Font colors</h3>
@@ -229,11 +231,11 @@ function nitwpress_widget_control() {
   <table>
     <tr>
       <td>Comments</td>
-      <td><input type="text" name="fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
+      <td><input type="text" name="nitwpress_fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
     </tr>
     <tr>
       <td>Links</td>
-      <td><input type="text" name="linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
+      <td><input type="text" name="nitwpress_linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
     </tr>
   </table>
 
@@ -243,20 +245,18 @@ function nitwpress_widget_control() {
 
   <h3>Frame for icon image</h3>
 
-  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
+  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label></p>
-  <p>Color of icon frame: <input type="text" name="iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
+  <p>Color of icon frame: <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
   (Use hash color code (e.g. #ffffff) for the color of icon frame.
   HTML color name (e.g. white) is not acceptable.)</p>
 
   <h3>Miscellaneous options</h3>
 
-  <p>Update timeline cache at every <input type="text" name="interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
+  <p>Update timeline cache at every <input type="text" name="nitwpress_interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
 
-  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
+  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="nitwpress_logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_logo_checkbox">Display NiTwPress logo on Flash.</label></p>
-
-  <div><input type="hidden" name="nitwpress_action" /></div>
 </form>
 <?php
 
