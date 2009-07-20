@@ -5,7 +5,7 @@ Plugin URI: http://sakuratan.biz/contents/NiTwPress
 Description: NiTwPress is a Twitter client for WordPress sidebar widget. It displays your twit on the WordPress sidebar with comment scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
 Author: sakuratan
 Author URI: http://sakuratan.biz/
-Version: 0.9.2
+Version: 0.9.2.1
 */
 
 /*
@@ -264,11 +264,11 @@ function nitwpress_widget_control() {
 <?php
 
     if (!is_dir(NITWPRESS_CACHEDIR)) {
-	nitwpress_display_error(sprintf(__("Missing permissions for writing on %s. Fix the error before enter your Twitter account."), NITWPRESS_CACHEDIR));
+	nitwpress_display_error(sprintf(__("Missing permissions for writing on %s. Fix the error before enter your Twitter account.", 'nitwpress'), NITWPRESS_CACHEDIR));
     }
 
     if (!function_exists('curl_init')) {
-	nitwpress_display_error(__('Missing cURL module.'));
+	nitwpress_display_error(__('Missing cURL module.', 'nitwpress'));
     }
 }
 
@@ -308,7 +308,7 @@ function nitwpress_add_cron($sched) {
 	if (array_key_exists('interval', $options)) {
 	    $sched['nitwpress'] = array(
 		'interval' => (int)$options['interval'] * 60,
-		'display' => __('Schedule for NiTwPress plugins')
+		'display' => __('Schedule for NiTwPress plugins', 'nitwpress')
 	    );
 	}
     }
