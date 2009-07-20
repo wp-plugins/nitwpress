@@ -190,6 +190,10 @@ function nitwpress_sidebar_widget($args) {
     echo $after_widget;
 }
 
+function nitwpress_display_error($mesg) {
+    echo "<p style=\"color:red\">ERROR: {$mesg}</p>";
+}
+
 /*
  * Widget manager.
  */
@@ -202,76 +206,66 @@ function nitwpress_widget_control() {
 
 ?>
 <form method="post">
-  <h3>Twitter account</h3>
+  <h3><?php _e('Twitter account', 'nitwpress') ?></h3>
   <table>
     <tr>
-      <td>Username:</td>
+      <td><?php _e('Username:', 'nitwpress') ?></td>
       <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
     </tr>
 
     <tr>
-      <td>Password:</td>
+      <td><?php _e('Password:', 'nitwpress') ?></td>
       <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
     </tr>
   </table>
 
-  <h3>Widget title</h3>
+  <h3><?php _e('Widget title', 'nitwpress') ?></h3>
 
   <div><input type="text" name="nitwpress_widgettitle" value="<?php echo htmlspecialchars($options['widgettitle']) ?>" style="width:100%" /></div>
 
-  <p>(The widget suppress the widget title when this field is empty.)</p>
+  <p><?php _e('(The widget suppress the widget title when this field is empty.)', 'nitwpress') ?></p>
 
-  <h3>CSS for widget content</h3>
+  <h3><?php _e('CSS for widget content', 'nitwpress') ?></h3>
 
   <div><input type="text" name="nitwpress_widgetstyles" value="<?php echo htmlspecialchars($options['widgetstyles']) ?>" style="width:100%" /></div>
-  <p>(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for designing the widget with out this field.)</p>
+  <p><?php _e('(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for designing the widget with out this field.)', 'nitwpress') ?></p>
 
-  <h3>Font colors</h3>
+  <h3><?php _e('Font colors', 'nitwpress') ?></h3>
 
   <table>
     <tr>
-      <td>Color of comments:</td>
+      <td><?php _e('Color of comments:', 'nitwpress') ?></td>
       <td><input type="text" name="nitwpress_fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
     </tr>
     <tr>
-      <td>Color of links:</td>
+      <td><?php _e('Color of links:', 'nitwpress') ?></td>
       <td><input type="text" name="nitwpress_linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
     </tr>
   </table>
 
-  <p>(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields.
-  HTML color name (e.g. white) is not acceptable.
-  The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)</p>
-
-  <h3>Frame for icon image</h3>
+  <p><?php _e('(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields. HTML color name (e.g. white) is not acceptable. The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)', 'nitwpress', 'nitwpress') ?></p>
+  <h3><?php _e('Frame for icon image', 'nitwpress') ?></h3>
 
   <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
-  <label for="nitwpress_iconframe_checkbox">Enable icon image frame.</label></p>
-  <p>Color of icon frame: <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
-  (Use hash color code (e.g. #ffffff) for this field.
-  HTML color name (e.g. white) is not acceptable.)</p>
+  <label for="nitwpress_iconframe_checkbox"><?php _e('Enable icon image frame.', 'nitwpress') ?></label></p>
+  <p><?php _e('Color of icon frame:', 'nitwpress') ?> <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
+  <?php _e('(Use hash color code (e.g. #ffffff) for this field. HTML color name (e.g. white) is not acceptable.)', 'nitwpress') ?></p>
 
-  <h3>Miscellaneous options</h3>
+  <h3><?php _e('Miscellaneous options', 'nitwpress') ?></h3>
 
-  <p>Update timeline cache at every <input type="text" name="nitwpress_interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> minutes.</p>
+  <p><?php _e('Cache updating interval:', 'nitwpress') ?> <input type="text" name="nitwpress_interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> <?php _e('(minutes)', 'nitwpress') ?></p>
 
   <p><input type="checkbox" id="nitwpress_logo_checkbox" name="nitwpress_logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
-  <label for="nitwpress_logo_checkbox">Display NiTwPress logo on Flash.</label></p>
+  <label for="nitwpress_logo_checkbox"><?php _e('Display NiTwPress logo on Flash.', 'nitwpress') ?></label></p>
 </form>
 <?php
 
-    if (!is_dir(NITWPRESS_CACHEDIR)) :
-?>
-<p style="color:red">ERROR: Missing permissions for writing on
-<?php echo NITWPRESS_CACHEDIR ?><br />
-Fix the error before enter your Twitter account</p>
-<?php
-    endif;
+    if (!is_dir(NITWPRESS_CACHEDIR)) {
+	nitwpress_display_error(sprintf(__("Missing permissions for writing on %s. Fix the error before enter your Twitter account."), NITWPRESS_CACHEDIR));
+    }
 
     if (!function_exists('curl_init')) {
-?>
-<p style="color:red">ERROR: Missing cURL module.</p>
-<?php
+	nitwpress_display_error(__('Missing cURL module.'));
     }
 }
 
@@ -280,6 +274,8 @@ Fix the error before enter your Twitter account</p>
  */
 function nitwpress_init() {
     require_once(ABSPATH . 'wp-includes/widgets.php');
+    load_plugin_textdomain('nitwpress', 'wp-content/plugins/nitwpress/po',
+			   'nitwpress/po');
     register_sidebar_widget('NiTwPress', 'nitwpress_sidebar_widget');
     register_widget_control('NiTwPress', 'nitwpress_widget_control');
 }
