@@ -190,6 +190,9 @@ function nitwpress_sidebar_widget($args) {
     echo $after_widget;
 }
 
+/*
+ * Display errors.
+ */
 function nitwpress_display_error($mesg) {
     echo "<p style=\"color:red\">ERROR: {$mesg}</p>";
 }
@@ -210,12 +213,12 @@ function nitwpress_widget_control() {
   <table>
     <tr>
       <td><?php _e('Username:', 'nitwpress') ?></td>
-      <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" /></td>
+      <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" size="20" /></td>
     </tr>
 
     <tr>
       <td><?php _e('Password:', 'nitwpress') ?></td>
-      <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" /></td>
+      <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" size="20" /></td>
     </tr>
   </table>
 
