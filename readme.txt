@@ -4,7 +4,7 @@ Donate link: http://sakuratan.biz/
 Tags: twitter, widget, flash
 Requires at least: 2.7.0
 Tested up to: 2.7.1
-Stable tag: 0.9.2.1
+Stable tag: 0.9.2.2
 
 A Twitter client widget.
 
@@ -21,6 +21,10 @@ NiTwPress is a Twitter client WordPress widget. It displays your twit to the Wor
 5. Enter your Twitter account information to the widget control
 
 == Changelog ==
+
+= 0.9.2.2 =
+* Using WP_PLUGIN_URL and WP_PLUGIN_DIR.
+* Spaces for following the wordPress coding standards.
 
 = 0.9.2.1 =
 * Bug fixes.

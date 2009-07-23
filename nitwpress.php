@@ -5,7 +5,7 @@ Plugin URI: http://sakuratan.biz/contents/NiTwPress
 Description: NiTwPress is a Twitter client for WordPress sidebar widget. It displays your twit on the WordPress sidebar with comment scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
 Author: sakuratan
 Author URI: http://sakuratan.biz/
-Version: 0.9.2.1
+Version: 0.9.2.2
 */
 
 /*
@@ -30,9 +30,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-define('NITWPRESS_PLUGINS', '/wp-content/plugins/nitwpress/');
-define('NITWPRESS_CACHES', NITWPRESS_PLUGINS . 'caches/');
-define('NITWPRESS_CACHEDIR', ABSPATH . NITWPRESS_CACHES);
+define( 'NITWPRESS_CACHES', '/nitwpress/caches' );
 
 /*
  * Returns options.
@@ -51,25 +49,26 @@ function nitwpress_get_options() {
 	'iconframecolor' => '#c0c0c0'
     );
 
-    return array_merge($defaults, get_option('nitwpress_options', array()));
+    return array_merge( $defaults,
+			get_option( 'nitwpress_options', array() ) );
 }
 
 /*
  * Update options.
  */
-function nitwpress_update_options(&$newvars, $prefix='') {
+function nitwpress_update_options( &$newvars, $prefix='' ) {
     $options = nitwpress_get_options();
 
     $options['logo'] = false;
     $options['iconframe'] = false;
 
-    foreach ($options as $key => $value) {
+    foreach ( $options as $key => $value ) {
 	$nkey = "{$prefix}{$key}";
-	if (array_key_exists($nkey, $newvars)) {
+	if ( array_key_exists( $nkey, $newvars ) ) {
 	    $newvalue = $newvars[$nkey];
-	    if (($key == 'logo' || $key == 'iconframe') && $newvalue) {
+	    if ( ( $key == 'logo' || $key == 'iconframe' ) && $newvalue ) {
 		$options[$key] = true;
-	    } elseif ($key == 'interval') {
+	    } elseif ( $key == 'interval' ) {
 		$options[$key] = (int)$newvalue;
 	    } else {
 		$options[$key] = $newvalue;
@@ -77,35 +76,36 @@ function nitwpress_update_options(&$newvars, $prefix='') {
 	}
     }
 
-    update_option('nitwpress_options', $options);
+    update_option( 'nitwpress_options', $options );
 }
 
 /*
  * Update cache files.
  */
 function nitwpress_update_caches() {
-    require_once dirname(__file__) . '/twitter.php';
+    require_once dirname( __file__ ) . '/twitter.php';
 
     $options = nitwpress_get_options();
-    if (!$options['username'])
+    if ( !$options['username'] )
 	return;
 
-    nitwpress_twitter_update_caches(NITWPRESS_CACHEDIR, $options['username'],
-				    $options['password']);
+    nitwpress_twitter_update_caches(
+	WP_PLUGIN_DIR . NITWPRESS_CACHES,
+	$options['username'], $options['password'] );
 }
 
 /*
  * Implode with rawurlencode.
  */
-function nitwpress_rawurlencode_array(&$arr) {
-    if (!$arr)
+function nitwpress_rawurlencode_array( &$arr ) {
+    if ( !$arr )
 	return '';
 
     $s = '';
-    foreach ($arr as $key => $value) {
-	if ($s)
+    foreach ( $arr as $key => $value ) {
+	if ( $s )
 	    $s .= '&';
-	$s .= rawurlencode($key) . '=' . rawurlencode($value);
+	$s .= rawurlencode( $key ) . '=' . rawurlencode( $value );
     }
     return $s;
 }
@@ -113,54 +113,54 @@ function nitwpress_rawurlencode_array(&$arr) {
 /*
  * The widget.
  */
-function nitwpress_sidebar_widget($args) {
-    extract($args);
+function nitwpress_sidebar_widget( $args ) {
+    extract( $args );
 
     echo $before_widget;
 
     $options = nitwpress_get_options();
-    if ($options['username']) :
-	$username = htmlspecialchars($options['username']);
-	$siteurl = get_option('siteurl');
-	$plugin = $siteurl . NITWPRESS_PLUGINS;
-	$swf = htmlspecialchars("{$plugin}nitwpress.swf");
-	$base = htmlspecialchars("{$siteurl}" . NITWPRESS_CACHES);
+    if ( $options['username'] ) :
+	$username = htmlspecialchars( $options['username'] );
+	$siteurl = get_option( 'siteurl' );
+	$swf = htmlspecialchars( WP_PLUGIN_URL . '/nitwpress/nitwpress.swf' );
+	$base = htmlspecialchars( WP_PLUGIN_URL . NITWPRESS_CACHES . '/' );
 
 	$_flashvars = array();
 
-	if ($options['fontcolor'] &&
-	    strcasecmp($options['fontcolor'], 'auto') != 0) {
-	    $_flashvars['fontcolor'] = preg_replace('/^#*/', '',
-						    $options['fontcolor']);
+	if ( $options['fontcolor'] &&
+	     strcasecmp( $options['fontcolor'], 'auto' ) != 0 ) {
+	    $_flashvars['fontcolor'] =
+		    preg_replace( '/^#*/', '', $options['fontcolor'] );
 	}
 
-	if ($options['linkcolor'] &&
-	    strcasecmp($options['linkcolor'], 'auto') != 0) {
-	    $_flashvars['linkcolor'] = preg_replace('/^#*/', '',
-						    $options['linkcolor']);
+	if ( $options['linkcolor'] &&
+	     strcasecmp( $options['linkcolor'], 'auto' ) != 0 ) {
+	    $_flashvars['linkcolor'] =
+		    preg_replace( '/^#*/', '', $options['linkcolor'] );
 	}
 
-	if (!$options['logo']) {
+	if ( !$options['logo'] ) {
 	    $_flashvars['disablelogo'] = '1';
 	}
 
-	if ($options['iconframe']) {
+	if ( $options['iconframe'] ) {
 	    $_flashvars['iconframe'] = '1';
-	    $_flashvars['iconframecolor'] = preg_replace('/^#*/', '',
-						$options['iconframecolor']);
+	    $_flashvars['iconframecolor'] =
+		    preg_replace( '/^#*/', '', $options['iconframecolor'] );
 	}
 
-	$flashvars = nitwpress_rawurlencode_array($_flashvars);
+	$flashvars = nitwpress_rawurlencode_array( $_flashvars );
 
-	if ($options['widgetstyles']) {
-	    $style = ' style="'.htmlspecialchars($options['widgetstyles']).'"';
+	if ( $options['widgetstyles'] ) {
+	    $style = ' style="' .
+		     htmlspecialchars( $options['widgetstyles'] ) . '"';
 	} else {
 	    $style = '';
 	}
 
-	if ($options['widgettitle']) :
+	if ( $options['widgettitle'] ) :
 ?>
-<h2 class="widgettitle"><?php echo htmlspecialchars($options['widgettitle']) ?></h2>
+<h2 class="widgettitle"><?php echo htmlspecialchars( $options['widgettitle'] ) ?></h2>
 <?php
 	endif;
 ?>
@@ -193,7 +193,7 @@ function nitwpress_sidebar_widget($args) {
 /*
  * Display errors.
  */
-function nitwpress_display_error($mesg) {
+function nitwpress_display_error( $mesg ) {
     echo "<p style=\"color:red\">ERROR: {$mesg}</p>";
 }
 
@@ -201,74 +201,75 @@ function nitwpress_display_error($mesg) {
  * Widget manager.
  */
 function nitwpress_widget_control() {
-    if (array_key_exists('nitwpress_username', $_POST)) {
-	nitwpress_update_options($_POST, 'nitwpress_');
+    if ( array_key_exists( 'nitwpress_username', $_POST ) ) {
+	nitwpress_update_options( $_POST, 'nitwpress_' );
 	nitwpress_update_caches();
     }
     $options = nitwpress_get_options();
 
 ?>
 <form method="post">
-  <h3><?php _e('Twitter account', 'nitwpress') ?></h3>
+  <h3><?php _e( 'Twitter account', 'nitwpress' ) ?></h3>
   <table>
     <tr>
-      <td><?php _e('Username:', 'nitwpress') ?></td>
-      <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars($options['username']) ?>" size="20" /></td>
+      <td><?php _e( 'Username:', 'nitwpress' ) ?></td>
+      <td><input type="text" name="nitwpress_username" value="<?php echo htmlspecialchars( $options['username'] ) ?>" size="20" /></td>
     </tr>
 
     <tr>
-      <td><?php _e('Password:', 'nitwpress') ?></td>
-      <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars($options['password']) ?>" size="20" /></td>
+      <td><?php _e( 'Password:', 'nitwpress' ) ?></td>
+      <td><input type="password" name="nitwpress_password" value="<?php echo htmlspecialchars( $options['password'] ) ?>" size="20" /></td>
     </tr>
   </table>
 
-  <h3><?php _e('Widget title', 'nitwpress') ?></h3>
+  <h3><?php _e( 'Widget title', 'nitwpress' ) ?></h3>
 
-  <div><input type="text" name="nitwpress_widgettitle" value="<?php echo htmlspecialchars($options['widgettitle']) ?>" style="width:100%" /></div>
+  <div><input type="text" name="nitwpress_widgettitle" value="<?php echo htmlspecialchars( $options['widgettitle'] ) ?>" style="width:100%" /></div>
 
-  <p><?php _e('(The widget suppress the widget title when this field is empty.)', 'nitwpress') ?></p>
+  <p><?php _e( '(The widget suppress the widget title when this field is empty.)', 'nitwpress' ) ?></p>
 
-  <h3><?php _e('CSS for widget content', 'nitwpress') ?></h3>
+  <h3><?php _e( 'CSS for widget content', 'nitwpress' ) ?></h3>
 
-  <div><input type="text" name="nitwpress_widgetstyles" value="<?php echo htmlspecialchars($options['widgetstyles']) ?>" style="width:100%" /></div>
-  <p><?php _e('(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for designing the widget with out this field.)', 'nitwpress') ?></p>
+  <div><input type="text" name="nitwpress_widgetstyles" value="<?php echo htmlspecialchars( $options['widgetstyles'] ) ?>" style="width:100%" /></div>
+  <p><?php _e( '(The widget content area have &quot;nitwpress_widget_content&quot; class. You can use the CSS class for designing the widget with out this field.)', 'nitwpress' ) ?></p>
 
-  <h3><?php _e('Font colors', 'nitwpress') ?></h3>
+  <h3><?php _e( 'Font colors', 'nitwpress' ) ?></h3>
 
   <table>
     <tr>
-      <td><?php _e('Color of comments:', 'nitwpress') ?></td>
-      <td><input type="text" name="nitwpress_fontcolor" value="<?php echo htmlspecialchars($options['fontcolor']) ?>" size="7" /></td>
+      <td><?php _e( 'Color of comments:', 'nitwpress' ) ?></td>
+      <td><input type="text" name="nitwpress_fontcolor" value="<?php echo htmlspecialchars( $options['fontcolor'] ) ?>" size="7" /></td>
     </tr>
     <tr>
-      <td><?php _e('Color of links:', 'nitwpress') ?></td>
-      <td><input type="text" name="nitwpress_linkcolor" value="<?php echo htmlspecialchars($options['linkcolor']) ?>" size="7" /></td>
+      <td><?php _e( 'Color of links:', 'nitwpress' ) ?></td>
+      <td><input type="text" name="nitwpress_linkcolor" value="<?php echo htmlspecialchars( $options['linkcolor'] ) ?>" size="7" /></td>
     </tr>
   </table>
 
-  <p><?php _e('(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields. HTML color name (e.g. white) is not acceptable. The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)', 'nitwpress', 'nitwpress') ?></p>
-  <h3><?php _e('Frame for icon image', 'nitwpress') ?></h3>
+  <p><?php _e( '(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields. HTML color name (e.g. white) is not acceptable. The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)', 'nitwpress', 'nitwpress' ) ?></p>
+  <h3><?php _e( 'Frame for icon image', 'nitwpress' ) ?></h3>
 
-  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ($options['iconframe']) { echo 'checked="checked"'; } ?> />
-  <label for="nitwpress_iconframe_checkbox"><?php _e('Enable icon image frame.', 'nitwpress') ?></label></p>
-  <p><?php _e('Color of icon frame:', 'nitwpress') ?> <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars($options['iconframecolor']) ?>" size="7" /><br />
-  <?php _e('(Use hash color code (e.g. #ffffff) for this field. HTML color name (e.g. white) is not acceptable.)', 'nitwpress') ?></p>
+  <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ( $options['iconframe'] ) { echo 'checked="checked"'; } ?> />
+  <label for="nitwpress_iconframe_checkbox"><?php _e( 'Enable icon image frame.', 'nitwpress' ) ?></label></p>
+  <p><?php _e( 'Color of icon frame:', 'nitwpress' ) ?> <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars( $options['iconframecolor'] ) ?>" size="7" /><br />
+  <?php _e( '(Use hash color code (e.g. #ffffff) for this field. HTML color name (e.g. white) is not acceptable.)', 'nitwpress' ) ?></p>
 
-  <h3><?php _e('Miscellaneous options', 'nitwpress') ?></h3>
+  <h3><?php _e( 'Miscellaneous options', 'nitwpress' ) ?></h3>
 
-  <p><?php _e('Cache updating interval:', 'nitwpress') ?> <input type="text" name="nitwpress_interval" value="<?php echo htmlspecialchars($options['interval']) ?>" size="3" /> <?php _e('(minutes)', 'nitwpress') ?></p>
+  <p><?php _e( 'Cache updating interval:', 'nitwpress' ) ?> <input type="text" name="nitwpress_interval" value="<?php echo htmlspecialchars( $options['interval'] ) ?>" size="3" /> <?php _e( '(minutes)', 'nitwpress' ) ?></p>
 
-  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="nitwpress_logo" value="1" <?php if ($options['logo']) { echo 'checked="checked"'; } ?> />
-  <label for="nitwpress_logo_checkbox"><?php _e('Display NiTwPress logo on Flash.', 'nitwpress') ?></label></p>
+  <p><input type="checkbox" id="nitwpress_logo_checkbox" name="nitwpress_logo" value="1" <?php if ( $options['logo'] ) { echo 'checked="checked"'; } ?> />
+  <label for="nitwpress_logo_checkbox"><?php _e( 'Display NiTwPress logo on Flash.', 'nitwpress' ) ?></label></p>
 </form>
 <?php
 
-    if (!is_dir(NITWPRESS_CACHEDIR)) {
-	nitwpress_display_error(sprintf(__("Missing permissions for writing on %s. Fix the error before enter your Twitter account.", 'nitwpress'), NITWPRESS_CACHEDIR));
+    $dir = WP_PLUGIN_DIR . NITWPRESS_CACHES;
+    if ( !is_dir( $dir ) ) {
+	nitwpress_display_error( sprintf( __( "Missing permissions for writing on %s. Fix the error before enter your Twitter account.", 'nitwpress' ), $dir ) );
     }
 
-    if (!function_exists('curl_init')) {
-	nitwpress_display_error(__('Missing cURL module.', 'nitwpress'));
+    if ( !function_exists( 'curl_init' ) ) {
+	nitwpress_display_error( __( 'Missing cURL module.', 'nitwpress' ) );
     }
 }
 
@@ -276,49 +277,49 @@ function nitwpress_widget_control() {
  * Module initializer.
  */
 function nitwpress_init() {
-    require_once(ABSPATH . 'wp-includes/widgets.php');
-    load_plugin_textdomain('nitwpress', 'wp-content/plugins/nitwpress/po',
-			   'nitwpress/po');
-    register_sidebar_widget('NiTwPress', 'nitwpress_sidebar_widget');
-    register_widget_control('NiTwPress', 'nitwpress_widget_control');
+    require_once( ABSPATH . 'wp-includes/widgets.php' );
+    load_plugin_textdomain( 'nitwpress', 'wp-content/plugins/nitwpress/po',
+			    'nitwpress/po' );
+    register_sidebar_widget( 'NiTwPress', 'nitwpress_sidebar_widget' );
+    register_widget_control( 'NiTwPress', 'nitwpress_widget_control' );
 }
 
-add_action('init', 'nitwpress_init');
+add_action( 'init', 'nitwpress_init' );
 
 /*
  * Schedule cron task.
  */
 function hitwpress_activation() {
-    wp_schedule_event(time(), 'nitwpress', 'nitwpress_hourly_event');
+    wp_schedule_event( time(), 'nitwpress', 'nitwpress_hourly_event' );
 }
 
 /*
  * Unschedule cron task.
  */
 function nitwpress_deactivation() {
-    wp_clear_scheduled_hook('nitwpress_hourly_event');
+    wp_clear_scheduled_hook( 'nitwpress_hourly_event' );
 }
 
 /*
  * Filter for wp_cron that appends nitwpress schedule event.
  */
-function nitwpress_add_cron($sched) {
-    if (!array_key_exists('nitwpress', $sched)) {
-	$options = get_option('nitwpress_options');
-	if (array_key_exists('interval', $options)) {
+function nitwpress_add_cron( $sched ) {
+    if ( !array_key_exists( 'nitwpress', $sched ) ) {
+	$options = get_option( 'nitwpress_options' );
+	if ( array_key_exists( 'interval', $options ) ) {
 	    $sched['nitwpress'] = array(
 		'interval' => (int)$options['interval'] * 60,
-		'display' => __('Schedule for NiTwPress plugins', 'nitwpress')
+		'display' => __( 'Schedule for NiTwPress plugins', 'nitwpress' )
 	    );
 	}
     }
     return $sched;
 }
 
-register_activation_hook(__FILE__, 'hitwpress_activation');
-register_deactivation_hook(__FILE__, 'nitwpress_deactivation');
+register_activation_hook( __FILE__, 'hitwpress_activation' );
+register_deactivation_hook( __FILE__, 'nitwpress_deactivation' );
 
-add_action('nitwpress_hourly_event', 'nitwpress_update_caches');
-add_filter('cron_schedules', 'nitwpress_add_cron');
+add_action( 'nitwpress_hourly_event', 'nitwpress_update_caches' );
+add_filter( 'cron_schedules', 'nitwpress_add_cron' );
 
 ?>
