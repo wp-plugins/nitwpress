@@ -26,9 +26,11 @@ THE SOFTWARE.
  * Pickup XML elements flagment.
  */
 function nitwpress_twitter_xml_pickup($fh, $flagment, $elemnames) {
+    $repl = array('&amp;lt;' => '&lt;', '&amp;gt;' => '&gt;');
     foreach ($elemnames as $elem) {
 	if (preg_match(",<{$elem}>.*?</{$elem}>,s", $flagment, $matches)) {
-	    fwrite($fh, $matches[0] . "\n");
+	    fwrite($fh, strtr($matches[0], $repl));
+	    fwrite($fh, "\n");
 	}
     }
 }
