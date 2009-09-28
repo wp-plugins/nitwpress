@@ -4,7 +4,7 @@ Donate link: http://sakuratan.biz/
 Tags: twitter, widget, flash
 Requires at least: 2.7.0
 Tested up to: 2.8.4
-Stable tag: 0.9.2.3
+Stable tag: 0.9.2.4
 
 A Twitter client widget.
 
