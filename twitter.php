@@ -25,12 +25,25 @@ THE SOFTWARE.
 /*
  * Pickup XML elements flagment.
  */
-function nitwpress_twitter_xml_pickup($fh, $flagment, $elemnames) {
-    $repl = array('&amp;lt;' => '&lt;', '&amp;gt;' => '&gt;');
+function nitwpress_twitter_xml_pickup($fh, $flagment, $elemnames,
+				      $replacement=array()) {
+    $replaced = array();
+    $trans = array('&amp;lt;' => '&lt;', '&amp;gt;' => '&gt;');
     foreach ($elemnames as $elem) {
 	if (preg_match(",<{$elem}>.*?</{$elem}>,s", $flagment, $matches)) {
-	    fwrite($fh, strtr($matches[0], $repl));
+	    if (array_key_exists($elem, $replacement)) {
+		fwrite($fh, "<{$elem}>{$replacement[$elem]}</{$elem}>");
+		$replaced[$elem] = true;
+	    } else {
+		fwrite($fh, strtr($matches[0], $trans));
+	    }
 	    fwrite($fh, "\n");
+	}
+    }
+
+    foreach ( $replacement as $key => $value ) {
+	if ( !array_key_exists( $key, $replaced ) ) {
+	    fwrite($fh, "<{$key}>{$replacement[$key]}</{$key}>");
 	}
     }
 }
@@ -38,7 +51,7 @@ function nitwpress_twitter_xml_pickup($fh, $flagment, $elemnames) {
 /*
  * Update cache files.
  */
-function nitwpress_twitter_update_caches($dir, $username, $password) {
+function nitwpress_twitter_update_caches($dir, $options) {
     if (!@is_dir($dir)) {
 	if (!mkdir($dir, 0755, true))
 	    return false;
@@ -61,7 +74,7 @@ function nitwpress_twitter_update_caches($dir, $username, $password) {
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     curl_setopt($ch, CURLOPT_URL,
 		'http://twitter.com/statuses/user_timeline.xml');
-    curl_setopt($ch, CURLOPT_USERPWD, "{$username}:{$password}");
+    curl_setopt($ch, CURLOPT_USERPWD, "{$options['username']}:{$options['password']}");
     $ctx = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -89,6 +102,15 @@ function nitwpress_twitter_update_caches($dir, $username, $password) {
 	'profile_text_color', 'profile_link_color',
 	'profile_sidebar_fill_color', 'profile_sidebar_border_color',
 	'profile_background_image_url', 'profile_background_tile');
+    $user_replacement = array();
+    if ( $options['profile_background_image_url'] ) {
+	$user_replacement['profile_background_image_url'] = $options['profile_background_image_url'];
+	if ( $options['profile_background_tile'] ) {
+	    $user_replacement['profile_background_tile'] = 'true';
+	} else {
+	    $user_replacement['profile_background_tile'] = 'false';
+	}
+    }
     fwrite($fh, "<?xml version=\"1.0\" encoding=\"UTF-8\"".'?'.">\n");
     fwrite($fh, "<statuses type=\"array\">\n");
     if (preg_match_all(',<status>.*?</status>,s', $ctx, $status_matches)) {
@@ -106,7 +128,7 @@ function nitwpress_twitter_update_caches($dir, $username, $password) {
 	    nitwpress_twitter_xml_pickup($fh, $flagment, $flagment_pickup);
 	    if ($user) {
 		fwrite($fh, "<user>\n");
-		nitwpress_twitter_xml_pickup($fh, $user, $user_pickup);
+		nitwpress_twitter_xml_pickup($fh, $user, $user_pickup, $user_replacement);
 		fwrite($fh, "</user>\n");
 	    }
 	    fwrite($fh, "</status>\n");
@@ -121,8 +143,15 @@ function nitwpress_twitter_update_caches($dir, $username, $password) {
     }
 
     // Download background image because it cannot access from swf file
-    if ($profile_background_image_url) {
-	$filename = "{$dir}/" . basename($profile_background_image_url);
+    if ( $options['profile_background_image_url'] ) {
+	$url = $options['profile_background_image_url'];
+    } elseif ( $profile_background_image_url ) {
+	$url = $profile_background_image_url;
+    } else {
+	$url = null;
+    }
+    if ($url) {
+	$filename = "{$dir}/" . basename($url);
 	$tmpfile = tempnam($dir, 'tmp');
 	if (!$tmpfile)
 	    return false;
@@ -137,7 +166,7 @@ function nitwpress_twitter_update_caches($dir, $username, $password) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-	curl_setopt($ch, CURLOPT_URL, $profile_background_image_url);
+	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_FILE, $fh);
 	if ($mtime !== false) {
 	    $mod = preg_replace('/\+0000$/', 'GMT', gmdate('r', $mtime));

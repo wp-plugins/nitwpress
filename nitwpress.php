@@ -46,7 +46,9 @@ function nitwpress_get_options() {
 	'interval' => 15,
 	'logo' => true,
 	'iconframe' => false,
-	'iconframecolor' => '#c0c0c0'
+	'iconframecolor' => '#c0c0c0',
+	'profile_background_image_url' => '',
+	'profile_background_tile' => false
     );
 
     return array_merge( $defaults,
@@ -61,12 +63,14 @@ function nitwpress_update_options( &$newvars, $prefix='' ) {
 
     $options['logo'] = false;
     $options['iconframe'] = false;
+    $options['profile_background_tile'] = false;
 
     foreach ( $options as $key => $value ) {
 	$nkey = "{$prefix}{$key}";
 	if ( array_key_exists( $nkey, $newvars ) ) {
 	    $newvalue = $newvars[$nkey];
-	    if ( ( $key == 'logo' || $key == 'iconframe' ) && $newvalue ) {
+	    if ( ( $key == 'logo' || $key == 'iconframe' ||
+		   $key == 'profile_background_tile' ) && $newvalue ) {
 		$options[$key] = true;
 	    } elseif ( $key == 'interval' ) {
 		$options[$key] = (int)$newvalue;
@@ -89,9 +93,8 @@ function nitwpress_update_caches() {
     if ( !$options['username'] )
 	return;
 
-    nitwpress_twitter_update_caches(
-	WP_PLUGIN_DIR . NITWPRESS_CACHES,
-	$options['username'], $options['password'] );
+    nitwpress_twitter_update_caches( WP_PLUGIN_DIR . NITWPRESS_CACHES,
+				     $options );
 }
 
 /*
@@ -253,6 +256,14 @@ function nitwpress_widget_control() {
   <label for="nitwpress_iconframe_checkbox"><?php _e( 'Enable icon image frame.', 'nitwpress' ) ?></label></p>
   <p><?php _e( 'Color of icon frame:', 'nitwpress' ) ?> <input type="text" name="nitwpress_iconframecolor" value="<?php echo htmlspecialchars( $options['iconframecolor'] ) ?>" size="7" /><br />
   <?php _e( '(Use hash color code (e.g. #ffffff) for this field. HTML color name (e.g. white) is not acceptable.)', 'nitwpress' ) ?></p>
+
+  <h3><?php _e( 'Background Image', 'nitwpress' ) ?></h3>
+
+  <p><?php _e( 'Enter image URL if you want to use different background image from Twitter', 'nitwpress' ) ?><br />
+  <input type="text" name="nitwpress_profile_background_image_url" value="<?php echo htmlspecialchars( $options['profile_background_image_url'] ) ?>" style="width:99%" /></p>
+
+  <p><input type="checkbox" id="nitwpress_profile_background_tile" name="nitwpress_profile_background_tile" value="1" <?php if ( $options['profile_background_tile'] ) { echo 'checked="checked"'; } ?> />
+  <label for="nitwpress_profile_background_tile"><?php _e( 'Tile background image', 'nitwpress' ) ?></label>
 
   <h3><?php _e( 'Miscellaneous options', 'nitwpress' ) ?></h3>
 

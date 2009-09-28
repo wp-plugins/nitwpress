@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/nitwpress\n"
-"POT-Creation-Date: 2009-07-20 14:18+0900\n"
+"POT-Creation-Date: 2009-09-28 23:49+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,101 +16,114 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: nitwpress.php:209
+#: nitwpress.php:215
 msgid "Twitter account"
 msgstr ""
 
-#: nitwpress.php:212
+#: nitwpress.php:218
 msgid "Username:"
 msgstr ""
 
-#: nitwpress.php:217
+#: nitwpress.php:223
 msgid "Password:"
 msgstr ""
 
-#: nitwpress.php:222
+#: nitwpress.php:228
 msgid "Widget title"
 msgstr ""
 
-#: nitwpress.php:226
+#: nitwpress.php:232
 msgid "(The widget suppress the widget title when this field is empty.)"
 msgstr ""
 
-#: nitwpress.php:228
+#: nitwpress.php:234
 msgid "CSS for widget content"
 msgstr ""
 
-#: nitwpress.php:231
+#: nitwpress.php:237
 msgid ""
 "(The widget content area have &quot;nitwpress_widget_content&quot; class. "
 "You can use the CSS class for designing the widget with out this field.)"
 msgstr ""
 
-#: nitwpress.php:233
+#: nitwpress.php:239
 msgid "Font colors"
 msgstr ""
 
-#: nitwpress.php:237
+#: nitwpress.php:243
 msgid "Color of comments:"
 msgstr ""
 
-#: nitwpress.php:241
+#: nitwpress.php:247
 msgid "Color of links:"
 msgstr ""
 
-#: nitwpress.php:246
+#: nitwpress.php:252
 msgid ""
 "(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields. "
 "HTML color name (e.g. white) is not acceptable. The widget will read default "
 "font and link colors from Twitter API if you choose &quot;auto&quot;.)"
 msgstr ""
 
-#: nitwpress.php:247
+#: nitwpress.php:253
 msgid "Frame for icon image"
 msgstr ""
 
-#: nitwpress.php:250
+#: nitwpress.php:256
 msgid "Enable icon image frame."
 msgstr ""
 
-#: nitwpress.php:251
+#: nitwpress.php:257
 msgid "Color of icon frame:"
 msgstr ""
 
-#: nitwpress.php:252
+#: nitwpress.php:258
 msgid ""
 "(Use hash color code (e.g. #ffffff) for this field. HTML color name (e.g. "
 "white) is not acceptable.)"
 msgstr ""
 
-#: nitwpress.php:254
+#: nitwpress.php:260
+msgid "Background Image"
+msgstr ""
+
+#: nitwpress.php:262
+msgid ""
+"Enter image URL if you want to use different background image from Twitter"
+msgstr ""
+
+#: nitwpress.php:266
+msgid "Tile background image"
+msgstr ""
+
+#: nitwpress.php:268
 msgid "Miscellaneous options"
 msgstr ""
 
-#: nitwpress.php:256
+#: nitwpress.php:270
 msgid "Cache updating interval:"
 msgstr ""
 
-#: nitwpress.php:256
+#: nitwpress.php:270
 msgid "(minutes)"
 msgstr ""
 
-#: nitwpress.php:259
+#: nitwpress.php:273
 msgid "Display NiTwPress logo on Flash."
 msgstr ""
 
-#: nitwpress.php:264
+#: nitwpress.php:279
 #, php-format
 msgid ""
 "Missing permissions for writing on %s. Fix the error before enter your "
 "Twitter account."
 msgstr ""
 
-#: nitwpress.php:268
+#: nitwpress.php:283
 msgid "Missing cURL module."
 msgstr ""
 
-#: nitwpress.php:308
+#: nitwpress.php:323
 msgid "Schedule for NiTwPress plugins"
 msgstr ""
 
