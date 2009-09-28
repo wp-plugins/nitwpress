@@ -72,20 +72,28 @@ function nitwpress_twitter_update_caches($dir, $options) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
     curl_setopt($ch, CURLOPT_URL,
 		'http://twitter.com/statuses/user_timeline.xml');
     curl_setopt($ch, CURLOPT_USERPWD, "{$options['username']}:{$options['password']}");
     $ctx = curl_exec($ch);
+    if (!$ctx) {
+	curl_close($ch);
+	return false;
+    }
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    if (!$ctx)
-	return false;
     if ($code != 200) {
 	trigger_error("Twitter api returns error with {$code}",
 		      E_USER_WARNING);
 	return false;
     }
-
+    if (!preg_match('/^<\?xml/', $ctx)) {
+	trigger_error("Got none XML results", E_USER_WARNING);
+	return false;
+    }
 
     // Strip and save result XML
     $tmpfile = tempnam($dir, 'tmp');
