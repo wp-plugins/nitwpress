@@ -8,39 +8,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NiTwPress\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/nitwpress\n"
-"POT-Creation-Date: 2009-09-28 23:49+0900\n"
-"PO-Revision-Date: 2009-09-29 00:10+0900\n"
+"POT-Creation-Date: 2009-11-06 23:49+0900\n"
+"POT-Creation-Date: 2009-11-06 23:54+0900\n"
 "Last-Translator: sakuratan <kansuke426@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: nitwpress.php:215
+#: nitwpress.php:221
 msgid "Twitter account"
 msgstr "Twitter アカウント"
 
-#: nitwpress.php:218
+#: nitwpress.php:224
 msgid "Username:"
 msgstr "ユーザー"
 
-#: nitwpress.php:223
+#: nitwpress.php:229
 msgid "Password:"
 msgstr "パスワード"
 
-#: nitwpress.php:228
+#: nitwpress.php:234
 msgid "Widget title"
 msgstr "ウィジェットタイトル"
 
-#: nitwpress.php:232
+#: nitwpress.php:238
 msgid "(The widget suppress the widget title when this field is empty.)"
 msgstr "(省略するとウィジェットのタイトルは表示されません)"
 
-#: nitwpress.php:234
+#: nitwpress.php:240
 msgid "CSS for widget content"
 msgstr "ウィジェットコンテントの CSS"
 
-#: nitwpress.php:237
+#: nitwpress.php:243
 msgid ""
 "(The widget content area have &quot;nitwpress_widget_content&quot; class. "
 "You can use the CSS class for designing the widget with out this field.)"
@@ -48,19 +48,19 @@ msgstr "(ウィジェットコンテントエリアには "
 "&quot;nitwpress_widget_content&quot; class がセットされていますので、"
 "この項目を使用せずにスタイルを変更することもできます)"
 
-#: nitwpress.php:239
+#: nitwpress.php:245
 msgid "Font colors"
 msgstr "フォントの色"
 
-#: nitwpress.php:243
+#: nitwpress.php:249
 msgid "Color of comments:"
 msgstr "コメント"
 
-#: nitwpress.php:247
+#: nitwpress.php:253
 msgid "Color of links:"
 msgstr "リンク"
 
-#: nitwpress.php:252
+#: nitwpress.php:258
 msgid ""
 "(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields. "
 "HTML color name (e.g. white) is not acceptable. The widget will read default "
@@ -69,55 +69,59 @@ msgstr "(ハッシュによる色 (#ffffff など) または &quot;auto&quot; �
 "指定してください。white などの HTML 色名は使用できません。"
 "&quot;auto&quot; を指定した場合、Twitter API よりデフォルトの色を取得します)"
 
-#: nitwpress.php:253
-msgid "Frame for icon image"
-msgstr "アイコン画像の枠"
+#: nitwpress.php:260
+msgid "Icon"
+msgstr "アイコン"
 
-#: nitwpress.php:256
+#: nitwpress.php:263
+msgid "Display your Twitter icon."
+msgstr "アイコン画像を表示する"
+
+#: nitwpress.php:266
 msgid "Enable icon image frame."
 msgstr "アイコン画像に枠を付ける"
 
-#: nitwpress.php:257
+#: nitwpress.php:267
 msgid "Color of icon frame:"
 msgstr "枠の色"
 
-#: nitwpress.php:258
+#: nitwpress.php:268
 msgid ""
 "(Use hash color code (e.g. #ffffff) for this field. HTML color name (e.g. "
 "white) is not acceptable.)"
 msgstr "(ハッシュによる色 (#ffffff など) を指定してください。"
 "white などの HTML 色名は使用できません)"
 
-#: nitwpress.php:260
+#: nitwpress.php:270
 msgid "Background Image"
 msgstr "背景画像"
 
-#: nitwpress.php:262
+#: nitwpress.php:272
 msgid ""
 "Enter image URL if you want to use different background image from Twitter"
 msgstr "Twitter とは異なる背景画像を使用する場合は、以下に画像ファイルの URL を入力してください"
 
-#: nitwpress.php:266
+#: nitwpress.php:276
 msgid "Tile background image"
 msgstr "背景画像をタイル化する"
 
-#: nitwpress.php:268
+#: nitwpress.php:278
 msgid "Miscellaneous options"
 msgstr "その他のオプション"
 
-#: nitwpress.php:270
+#: nitwpress.php:280
 msgid "Cache updating interval:"
 msgstr "キャッシュ更新インターバル:"
 
-#: nitwpress.php:270
+#: nitwpress.php:280
 msgid "(minutes)"
 msgstr "(分)"
 
-#: nitwpress.php:273
+#: nitwpress.php:283
 msgid "Display NiTwPress logo on Flash."
 msgstr "二TwPress ロゴを Flash に表示する"
 
-#: nitwpress.php:279
+#: nitwpress.php:289
 #, php-format
 msgid ""
 "Missing permissions for writing on %s. Fix the error before enter your "
@@ -125,11 +129,11 @@ msgid ""
 msgstr "書き込み権限が %s にありません。Twitter アカウントを入力する前に"
 "問題を解決してください。"
 
-#: nitwpress.php:283
+#: nitwpress.php:293
 msgid "Missing cURL module."
 msgstr "cURL モジュールが必要です。"
 
-#: nitwpress.php:323
+#: nitwpress.php:333
 msgid "Schedule for NiTwPress plugins"
 msgstr ""
 
