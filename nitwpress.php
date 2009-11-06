@@ -5,7 +5,7 @@ Plugin URI: http://sakuratan.biz/contents/NiTwPress
 Description: NiTwPress is a Twitter client for WordPress sidebar widget. It displays your twit on the WordPress sidebar with comment scrolling like Niconico-doga. (NiTwPress is an abbreviation of `NIconico-doga like TWitter client for wordPRESS'.)
 Author: sakuratan
 Author URI: http://sakuratan.biz/
-Version: 0.9.2.5
+Version: 0.9.2.6
 */
 
 /*
@@ -45,6 +45,7 @@ function nitwpress_get_options() {
 	'linkcolor' => 'auto',
 	'interval' => 15,
 	'logo' => true,
+	'icon' => true,
 	'iconframe' => false,
 	'iconframecolor' => '#c0c0c0',
 	'profile_background_image_url' => '',
@@ -62,6 +63,7 @@ function nitwpress_update_options( &$newvars, $prefix='' ) {
     $options = nitwpress_get_options();
 
     $options['logo'] = false;
+    $options['icon'] = false;
     $options['iconframe'] = false;
     $options['profile_background_tile'] = false;
 
@@ -69,7 +71,7 @@ function nitwpress_update_options( &$newvars, $prefix='' ) {
 	$nkey = "{$prefix}{$key}";
 	if ( array_key_exists( $nkey, $newvars ) ) {
 	    $newvalue = $newvars[$nkey];
-	    if ( ( $key == 'logo' || $key == 'iconframe' ||
+	    if ( ( $key == 'logo' || $key == 'icon' || $key == 'iconframe' ||
 		   $key == 'profile_background_tile' ) && $newvalue ) {
 		$options[$key] = true;
 	    } elseif ( $key == 'interval' ) {
@@ -144,6 +146,10 @@ function nitwpress_sidebar_widget( $args ) {
 
 	if ( !$options['logo'] ) {
 	    $_flashvars['disablelogo'] = '1';
+	}
+
+	if ( !$options['icon'] ) {
+	    $_flashvars['disableicon'] = '1';
 	}
 
 	if ( $options['iconframe'] ) {
@@ -250,7 +256,11 @@ function nitwpress_widget_control() {
   </table>
 
   <p><?php _e( '(Use hash color code (e.g. #ffffff) or &quot;auto&quot; for these fields. HTML color name (e.g. white) is not acceptable. The widget will read default font and link colors from Twitter API if you choose &quot;auto&quot;.)', 'nitwpress', 'nitwpress' ) ?></p>
-  <h3><?php _e( 'Frame for icon image', 'nitwpress' ) ?></h3>
+
+  <h3><?php _e( 'Icon', 'nitwpress' ) ?></h3>
+
+  <p><input type="checkbox" id="nitwpress_icon" name="nitwpress_icon" value="1" <?php if ( $options['icon'] ) { echo 'checked="checked"'; }?> />
+  <label for="nitwpress_icon"><?php _e( 'Display your Twitter icon.', 'nitwpress' ) ?></label></p>
 
   <p><input type="checkbox" id="nitwpress_iconframe_checkbox" name="nitwpress_iconframe" value="1" <?php if ( $options['iconframe'] ) { echo 'checked="checked"'; } ?> />
   <label for="nitwpress_iconframe_checkbox"><?php _e( 'Enable icon image frame.', 'nitwpress' ) ?></label></p>
